@@ -4,6 +4,7 @@ import { MovieModule } from './movie/movie.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
+import { Content, Movie, Series } from './movie/entity/movie.entity';
 /// 중앙집합 모듈.
 
 @Module({
@@ -31,7 +32,11 @@ import * as Joi from 'joi';
         username: configService.get<string>('DB_USERNAME'),
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
-        entities: [],
+        entities: [
+          Movie,
+          Series,
+          Content,
+        ],
         synchronize: true, // 개발할때만 true.
       }),
       inject: [ConfigService] //config service 우선 동작해서 인스턴스화 하고 typeorm 실행 -> 비동기, 받아오기에 inject
