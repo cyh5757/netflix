@@ -4,7 +4,10 @@ import { MovieModule } from './movie/movie.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
-import { Movie } from './movie/entity/movie.entity';
+import { Movie} from './movie/entity/movie.entity';
+import { MovieDetail } from './movie/entity/movie-dtail.entity';
+import { DirectorModule } from './director/director.module';
+import { Director } from './director/entity/director.entity';
 /// 중앙집합 모듈.
 
 @Module({
@@ -33,13 +36,18 @@ import { Movie } from './movie/entity/movie.entity';
         password: configService.get<string>('DB_PASSWORD'),
         database: configService.get<string>('DB_DATABASE'),
         entities: [
-          Movie
+          Movie,
+          MovieDetail,
+          Director,
+
+
         ],
         synchronize: true, // 개발할때만 true.
       }),
       inject: [ConfigService] //config service 우선 동작해서 인스턴스화 하고 typeorm 실행 -> 비동기, 받아오기에 inject
     }),
     MovieModule,
+    DirectorModule,
   ],
 })
 export class AppModule { }

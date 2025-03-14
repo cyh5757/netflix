@@ -1,21 +1,22 @@
 import { Exclude, Expose, Transform } from "class-transformer";
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn, VersionColumn } from "typeorm";
+import { ChildEntity, Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, TableInheritance, UpdateDateColumn, VersionColumn } from "typeorm";
+import { BaseTable } from "../../common/entity/base-table.entity";
+import { MovieDetail } from "./movie-dtail.entity";
+import { Director } from "src/director/entity/director.entity";
 
 
-export class BaseEntity{
-  @CreateDateColumn()
-  createdAt: Date;
-  @UpdateDateColumn()
-  updatedAt: Date;
-  @VersionColumn()
-  version: number;
-}
-
+/// ManyToOne Director -> 감독은 여러개의 영화를 만들 수 있음.
+/// ManyToOne MovieDetail -> 영화는 하나의 상세 내용을 갖을 수 있음
+/// ManyToMany Genre -> 영화는 여러개의 장르를 갖을 수 있고, 장르는 여러개의 영화에 속할 수 있음.
 
 
 
-@Entity() // 에노테이트 해야 테이블 만들수 있음.
-export class Movie extends BaseEntity {
+/// movie /series ->Content
+/// runtime (영화 상영시간) / seriesCount(몇개 부작인지)
+
+
+@Entity()
+export class Movie extends BaseTable {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
@@ -23,4 +24,17 @@ export class Movie extends BaseEntity {
   @Column()
   genre: string;
 
+  @OneToOne(
+    () => MovieDetail,
+    movieDetail =>movieDetail.id,
+    {cascade: true}
+  )
+  @JoinColumn()
+  detail: MovieDetail;
+
+  @ManyToOne(
+    ()=>Director,
+    director => director.id,
+  )
+  director: Director;
 }
