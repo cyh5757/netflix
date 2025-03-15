@@ -7,19 +7,18 @@ import { UpdateDirectorDto } from './dto/update-director.dto';
 export class DirectorController {
   constructor(private readonly directorService: DirectorService) {}
 
-  @Post()
-  create(@Body() createDirectorDto: CreateDirectorDto) {
-    return this.directorService.create(createDirectorDto);
-  }
 
   @Get()
   findAll() {
     return this.directorService.findAll();
-  }
-
+  } 
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.directorService.findOne(+id);
+  }
+  @Post()
+  create(@Body() createDirectorDto: CreateDirectorDto) {
+    return this.directorService.create(createDirectorDto);
   }
 
   @Patch(':id')
