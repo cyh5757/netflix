@@ -8,6 +8,8 @@ import { Movie} from './movie/entity/movie.entity';
 import { MovieDetail } from './movie/entity/movie-dtail.entity';
 import { DirectorModule } from './director/director.module';
 import { Director } from './director/entity/director.entity';
+import { GenreModule } from './genre/genre.module';
+import { Genre } from './genre/entities/genre.entity';
 /// 중앙집합 모듈.
 
 @Module({
@@ -39,6 +41,7 @@ import { Director } from './director/entity/director.entity';
           Movie,
           MovieDetail,
           Director,
+          Genre,
 
 
         ],
@@ -48,6 +51,7 @@ import { Director } from './director/entity/director.entity';
     }),
     MovieModule,
     DirectorModule,
+    GenreModule,
   ],
 })
 export class AppModule { }

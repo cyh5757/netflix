@@ -21,9 +21,7 @@ export class UpdateMovieDto{
     @IsOptional()
     detail?: string;
 
-    @OneToMany(
-        () => Movie,
-        movie => movie.director,
-    )
-    movies: Movie[];
+    @IsNotEmpty()
+    @IsOptional()
+    directorID?: number;
 }
