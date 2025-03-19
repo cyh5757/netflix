@@ -1,4 +1,4 @@
-import { Equals, IsAlphanumeric, IsBoolean, IsDefined, IsEmpty, IsEnum, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsUUID, registerDecorator, Validate, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
+import { ArrayNotEmpty, Equals, IsAlphanumeric, IsArray, IsBoolean, IsDefined, IsEmpty, IsEnum, IsIn, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID, registerDecorator, Validate, ValidationArguments, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from "class-validator";
 import { OneToMany } from "typeorm";
 import { Movie } from "../entity/movie.entity";
 
@@ -10,18 +10,26 @@ enum MovieGenres {
 export class UpdateMovieDto{
 
     @IsNotEmpty()
+    @IsString()
     @IsOptional()
     title?: string;
 
-    @IsNotEmpty()
+
+    @IsArray()
+    @ArrayNotEmpty()
+    @IsNumber({},{
+        each: true,
+    })
     @IsOptional()
-    genre?: string;
+    genreIds?: number[];
     
     @IsNotEmpty()
+    @IsString()
     @IsOptional()
     detail?: string;
 
     @IsNotEmpty()
+    @IsNumber()
     @IsOptional()
     directorID?: number;
 }

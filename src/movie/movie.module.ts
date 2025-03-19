@@ -6,12 +6,14 @@ import { Movie } from './entity/movie.entity';
 import { MovieDetail } from './entity/movie-dtail.entity';
 import { Director } from 'src/director/entity/director.entity';
 import { DirectorService } from 'src/director/director.service';
+import { Genre } from 'src/genre/entities/genre.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
     Movie,
     MovieDetail,
     Director,
+    Genre,
   ]),
 
   ], // other modules that this module depends on
