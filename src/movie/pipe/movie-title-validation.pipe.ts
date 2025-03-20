@@ -6,6 +6,10 @@ export class MovieTitleValidationPipe implements PipeTransform<string, string>{
     // <x,y> : 제너릭 각 x,y은 input dtype, output dtype이다.
     transform(value: string, metadata: ArgumentMetadata): string {
         /// 만약에 글자 길이가 2보다 작으면 에러 던지기
+        if(!value){
+            return value;
+        }
+        
         if(value.length <= 2){
             throw new BadRequestException("영화의 제목은 3자 이상 작성해주세요");
         }
