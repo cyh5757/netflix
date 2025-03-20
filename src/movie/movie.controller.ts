@@ -1,7 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor, ParseIntPipe, ParseFloatPipe, DefaultValuePipe, NotFoundException } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
+import { MovieTitleValidationPipe } from './pipe/movie-title-validation.pipe';
+
+
+
+
+
+
 
 
 @Controller('movie')
@@ -11,7 +18,7 @@ export class MovieController {
 
   @Get()
   getMovies(
-    @Query('title') title?: string,
+    @Query('title',MovieTitleValidationPipe) title?: string,
   ) {
 
     /// title 쿼리의 타입이 string 타입인지?
@@ -20,8 +27,11 @@ export class MovieController {
     return this.movieService.findAll(title);
   }
   @Get(':id')
-  getMovie(@Param('id') id: string) {
-    return this.movieService.findOne(+id);
+  getMovie(
+    @Param('id', ParseFloatPipe) id: number,
+  ) {
+
+    return this.movieService.findOne(id);
   }
 
   //path param이 필요없음
@@ -36,7 +46,7 @@ export class MovieController {
   //path param이 필요함.
   @Patch(':id')
   patchMovie(
-    @Param('id') id: string,
+    @Param('id',ParseIntPipe) id: string,
     @Body() body: UpdateMovieDto,
   ) {
     return this.movieService.update(
@@ -48,7 +58,7 @@ export class MovieController {
 
   @Delete(':id')
   deleteMovie(
-    @Param('id') id: string,
+    @Param('id',ParseIntPipe) id: string,
     @Body('title') title: string,
   ) {
     return this.movieService.remove(+id);
