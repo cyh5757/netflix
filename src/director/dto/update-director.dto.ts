@@ -4,19 +4,4 @@ import { IsDateString, IsNotEmpty, IsOptional, IsString } from 'class-validator'
 import { OneToMany } from 'typeorm';
 import { Movie } from 'src/movie/entity/movie.entity';
 
-export class UpdateDirectorDto {
-    @IsNotEmpty()
-    @IsString()
-    @IsOptional()
-    name?: string;
-    @IsNotEmpty()
-    @IsDateString()
-    @IsOptional()
-    dob?: Date;
-    @IsNotEmpty()
-    @IsString()
-    @IsOptional()
-    nationality?: string;
-
-    
-}
+export class UpdateDirectorDto extends PartialType(CreateDirectorDto){}
