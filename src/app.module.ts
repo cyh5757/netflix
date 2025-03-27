@@ -10,6 +10,9 @@ import { DirectorModule } from './director/director.module';
 import { Director } from './director/entity/director.entity';
 import { GenreModule } from './genre/genre.module';
 import { Genre } from './genre/entities/genre.entity';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
 /// 중앙집합 모듈.
 
 @Module({
@@ -25,8 +28,9 @@ import { Genre } from './genre/entities/genre.entity';
         DB_USERNAME: Joi.string().required(),
         DB_PASSWORD: Joi.string().required(),
         DB_DATABASE: Joi.string().required(),
-
-
+        HASH_ROUNDS: Joi.number().required(),
+        ACCESS_TOKEN_SECRET: Joi.string().required(),
+        REFRESH_TOKEN_SECRET: Joi.string().required(),
       })
     }),
     TypeOrmModule.forRootAsync({ // 비동기하는 이유: config 모듈이 인스턴스화 -> inject 받아야해서
@@ -42,7 +46,7 @@ import { Genre } from './genre/entities/genre.entity';
           MovieDetail,
           Director,
           Genre,
-
+          User,
 
         ],
         synchronize: true, // 개발할때만 true.
@@ -52,6 +56,8 @@ import { Genre } from './genre/entities/genre.entity';
     MovieModule,
     DirectorModule,
     GenreModule,
+    AuthModule,
+    UserModule,
   ],
 })
 export class AppModule { }
