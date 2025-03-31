@@ -15,6 +15,8 @@ import { UserModule } from './user/user.module';
 import { User } from './user/entities/user.entity';
 import { envVariableKeys } from './common/const/env.const';
 import { BearerTokenMiddleware } from './auth/middleware/bearer-token.middleware';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './auth/guard/auth.guard';
 /// 중앙집합 모듈.
 
 @Module({
@@ -61,6 +63,14 @@ import { BearerTokenMiddleware } from './auth/middleware/bearer-token.middleware
     AuthModule,
     UserModule,
   ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard, /// 모든 기능들에서 Guard중 심지어, login, register에도
+      /// 따라서 필요에 의해 public으로 풀어줘야할 기능은 풀어줘야함.
+      /// decorator로 public으로 만들 router에 가서 적용. -> auth.controller.ts
+    }
+  ]
 })
 export class AppModule implements NestModule{
   configure(consumer: MiddlewareConsumer) {

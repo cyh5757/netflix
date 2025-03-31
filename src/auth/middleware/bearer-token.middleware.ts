@@ -26,12 +26,15 @@ export class BearerTokenMiddleware implements NestMiddleware {
 
         //decode는 검증은 안하고, payload만 가져옴
         //verifyAsync 는 검증도 함
-        const token = this.validateBearerToken(authHeader);
+        
 
 
 
         try {
+
+            const token = this.validateBearerToken(authHeader);
             const decodedPayload = this.jwtService.decode(token);
+
             if(decodedPayload.type !=='refresh' && decodedPayload.type !== 'access'){
                 throw new UnauthorizedException('잘못된 토큰입니다!')
             }
@@ -59,8 +62,9 @@ export class BearerTokenMiddleware implements NestMiddleware {
             next();
 
         } catch (e) {
-
-            throw new UnauthorizedException('토큰이 만료됐습니다!')
+            //login, register에서 decorator를 기준으로 public 뚫었지만,
+            //token이 필요없는데도, token 만료와 상관없이 지나가야해서 next()
+            next();
 
         }
 
