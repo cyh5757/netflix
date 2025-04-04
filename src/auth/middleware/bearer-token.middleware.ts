@@ -62,6 +62,11 @@ export class BearerTokenMiddleware implements NestMiddleware {
             next();
 
         } catch (e) {
+            ///token 만료시 프론트에도 알려줘야함
+            if(e.name === 'TokenExpiredError'){
+                throw new UnauthorizedException('토큰이 만료됐습니다.')
+            }
+                        
             //login, register에서 decorator를 기준으로 public 뚫었지만,
             //token이 필요없는데도, token 만료와 상관없이 지나가야해서 next()
             next();
