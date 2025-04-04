@@ -7,6 +7,7 @@ import { MovieDetail } from './entity/movie-dtail.entity';
 import { Director } from 'src/director/entity/director.entity';
 import { DirectorService } from 'src/director/director.service';
 import { Genre } from 'src/genre/entities/genre.entity';
+import { CommonModule } from 'src/common/common.module';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -15,6 +16,7 @@ import { Genre } from 'src/genre/entities/genre.entity';
     Director,
     Genre,
   ]),
+  CommonModule,
 
   ], // other modules that this module depends on
   controllers: [MovieController],

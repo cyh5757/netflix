@@ -7,6 +7,8 @@ import { DataSource, In, Like, Repository } from 'typeorm';
 import { MovieDetail } from './entity/movie-dtail.entity';
 import { Director } from 'src/director/entity/director.entity';
 import { Genre } from 'src/genre/entities/genre.entity';
+import { GetMoivesDto } from './dto/get-movies.dto';
+import { CommonService } from 'src/common/common.service';
 
 
 
@@ -23,10 +25,12 @@ export class MovieService {
     @InjectRepository(Genre)
     private readonly genreRepository: Repository<Genre>,
     private readonly dataSource: DataSource,
+    private readonly commonService: CommonService,
 
   ) { }
 
-  async findAll(title?: string) {
+  async findAll(dto?: GetMoivesDto) {
+    const {title, take, page} = dto;
     const qb = await this.movieRepository.createQueryBuilder('movie')
       .leftJoinAndSelect('movie.director', 'director')
       .leftJoinAndSelect('movie.genres', 'genres');
@@ -35,25 +39,12 @@ export class MovieService {
       qb.where('movie.title LIKE :title', { title: `%${title}%` })
     }
 
+    if(take && page){
+      this.commonService.applyPagePaginationParamsToQb(qb,dto);
+    }
+
+
     return await qb.getManyAndCount();
-
-
-
-
-
-    // ///  나중에 title 필터 기능 추가하기
-    // if(!title){
-    //   return [await this.movieRepository.find({
-    //     relations:["director",'genres']
-    //   }), await this.movieRepository.count()];
-    // }
-    // return this.movieRepository.findAndCount({
-    //   where: {
-    //     title: Like(`%${title}%`),
-    //   },
-    //   relations: ['director','genres']
-    // });
-
   }
   async findOne(id: number) {
     const movie = await this.movieRepository.createQueryBuilder('movie')

@@ -7,6 +7,7 @@ import { AuthGuard } from 'src/auth/guard/auth.guard';
 import { Public } from 'src/auth/decorator/public.decorator';
 import { RBAC } from 'src/auth/decorator/rbac.decorator';
 import { Role } from 'src/user/entities/user.entity';
+import { GetMoivesDto } from './dto/get-movies.dto';
 
 
 
@@ -23,13 +24,13 @@ export class MovieController {
   @Get()
   @Public()
   getMovies(
-    @Query('title',MovieTitleValidationPipe) title?: string,
+    @Query() dto?: GetMoivesDto,
   ) {
 
     /// title 쿼리의 타입이 string 타입인지?
     /// 이런거는 controller에서 하면 됨.
     // 하지만 논리는 service에서 진행
-    return this.movieService.findAll(title);
+    return this.movieService.findAll(dto);
   }
   @Get(':id')
   @Public()
