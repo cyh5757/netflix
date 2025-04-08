@@ -14,6 +14,7 @@ export class GenreService {
   ){}
 
   async create(createGenreDto: CreateGenreDto) {
+
     const genre = await this.genreRepository.findOne({
       where:{
         name: createGenreDto.name,
