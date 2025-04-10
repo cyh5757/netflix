@@ -1,4 +1,4 @@
-import { Controller,Request, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor, ParseIntPipe, ParseFloatPipe, DefaultValuePipe, NotFoundException, UseGuards } from '@nestjs/common';
+import { Controller,Request, Get, Post, Body, Patch, Param, Delete, Query, UseInterceptors, ClassSerializerInterceptor, ParseIntPipe, ParseFloatPipe, DefaultValuePipe, NotFoundException, UseGuards, UploadedFile, UploadedFiles } from '@nestjs/common';
 import { MovieService } from './movie.service';
 import { CreateMovieDto } from './dto/create-movie.dto';
 import { UpdateMovieDto } from './dto/update-movie.dto';
@@ -11,6 +11,7 @@ import { GetMoivesDto } from './dto/get-movies.dto';
 import { CacheInterceptor } from 'src/common/interceptor/cache.interceptor';
 import { Transaction } from 'typeorm';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
+import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 
 
 
@@ -48,10 +49,14 @@ export class MovieController {
   @Post()
   @RBAC(Role.admin)
   @UseInterceptors(TransactionInterceptor)
+  @UseInterceptors(FilesInterceptor('movies'))
   postMovie(
     @Body() body: CreateMovieDto,
     @Request() req,
+    @UploadedFiles() files: Express.Multer.File[]
   ) {
+    console.log('---------------------')
+    console.log(files);
     return this.movieService.create(
       body,
       req.queryRunner,

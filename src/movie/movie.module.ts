@@ -8,6 +8,9 @@ import { Director } from 'src/director/entity/director.entity';
 import { DirectorService } from 'src/director/director.service';
 import { Genre } from 'src/genre/entities/genre.entity';
 import { CommonModule } from 'src/common/common.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { join } from 'path';
 
 @Module({
   imports: [TypeOrmModule.forFeature([
@@ -17,6 +20,12 @@ import { CommonModule } from 'src/common/common.module';
     Genre,
   ]),
   CommonModule,
+  MulterModule.register({
+    storage: diskStorage({
+      /// ....../Netflix/public/movie
+      destination: join(process.cwd(),'public','movie'),
+    }),
+  }),
 
   ], // other modules that this module depends on
   controllers: [MovieController],
