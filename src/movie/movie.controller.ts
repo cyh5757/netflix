@@ -13,6 +13,9 @@ import { Transaction } from 'typeorm';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { MovieFilePipe } from './pipe/movie-file.pipe';
+import { UserId } from 'src/user/decorator/user-id.decorator';
+import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
+import {QueryRunner as QR} from 'typeorm'
 
 
 
@@ -52,12 +55,13 @@ export class MovieController {
   @UseInterceptors(TransactionInterceptor)
   postMovie(
     @Body() body: CreateMovieDto,
-    @Request() req,
-
+    @QueryRunner() QueryRunner: QR,
+    @UserId() userId: number,
   ) {
     return this.movieService.create(
       body,
-      req.queryRunner,
+      userId,
+      QueryRunner,
 
     );
   }

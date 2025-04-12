@@ -9,8 +9,8 @@ import { Director } from 'src/director/entity/director.entity';
 import { Genre } from 'src/genre/entities/genre.entity';
 import { GetMoivesDto } from './dto/get-movies.dto';
 import { CommonService } from 'src/common/common.service';
-import {join} from 'path';
-import {rename} from 'fs/promises'
+import { join } from 'path';
+import { rename } from 'fs/promises'
 
 
 @Injectable()
@@ -54,6 +54,7 @@ export class MovieService {
       .leftJoinAndSelect('movie.director', 'director')
       .leftJoinAndSelect('movie.genres', 'genres')
       .leftJoinAndSelect('movie.detail', 'detail')
+      .leftJoinAndSelect('movie.creator', 'creator')
       .where('movie.id=:id', { id })
       .getOne();
 
@@ -69,7 +70,7 @@ export class MovieService {
     }
     return movie
   }
-  async create(createMovieDto: CreateMovieDto, qr: QueryRunner) {
+  async create(createMovieDto: CreateMovieDto, userId: number, qr: QueryRunner) {
     //create는 객체만 생성, save를 사용해야 저장
     // const movieDetail = await this.movieDetailRepository.save({
     //   detail: createMovieDto.detail,
@@ -109,10 +110,7 @@ export class MovieService {
 
     const tempFolder = join('public', 'temp');
 
-    await rename(
-      join(process.cwd(), tempFolder, createMovieDto.movieFileName),
-      join(process.cwd(), movieFolder, createMovieDto.movieFileName),
-    )
+
 
 
 
@@ -127,6 +125,9 @@ export class MovieService {
           id: movieDetailId,
         },
         director,
+        creator:{
+          id:userId,
+        },
         //manytomany는 안된다. 따로 해야한다
         movieFilePath: join(movieFolder, createMovieDto.movieFileName),
       })
@@ -138,6 +139,11 @@ export class MovieService {
       .relation(Movie, 'genres')
       .of(movieId)
       .add(genres.map(genre => genre.id))
+
+    await rename(
+      join(process.cwd(), tempFolder, createMovieDto.movieFileName),
+      join(process.cwd(), movieFolder, createMovieDto.movieFileName),
+    )
 
     return await qr.manager.findOne(Movie, {
       where: {
