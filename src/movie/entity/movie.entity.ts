@@ -4,6 +4,8 @@ import { BaseTable } from "../../common/entity/base-table.entity";
 import { MovieDetail } from "./movie-dtail.entity";
 import { Director } from "src/director/entity/director.entity";
 import { Genre } from "src/genre/entities/genre.entity";
+import { MovieFilePipe } from "../pipe/movie-file.pipe";
+import { User } from "src/user/entities/user.entity";
 
 
 /// ManyToOne Director -> 감독은 여러개의 영화를 만들 수 있음.
@@ -17,11 +19,22 @@ import { Genre } from "src/genre/entities/genre.entity";
 export class Movie extends BaseTable {
   @PrimaryGeneratedColumn()
   id: number;
+
+
+  @ManyToOne(
+    ()=> User,
+    (user) => user.createdMovies,
+  )
+  creator: User;
+
+
   @Column({
     unique: true,
   })
   title: string;
   
+
+
   @ManyToMany(
     ()=>Genre,
     genre => genre.movies,
@@ -46,12 +59,17 @@ export class Movie extends BaseTable {
   @JoinColumn()
   detail: MovieDetail;
 
+  @Column()
+  @Transform(({value}) => `http://localhost:3000/${value}`)
+  movieFilePath: string;
+
   @ManyToOne(
     ()=>Director,
     director => director.id,
     {
       cascade: true,
       nullable: false,
+      
     }
   )
   director: Director;

@@ -21,6 +21,8 @@ import { RBACGuard } from './auth/guard/rbac.guard';
 import { ResponseTimeInterceptor } from './common/interceptor/response-time.interceptor';
 import { ForbiddenExceptionFilter } from './common/filter/forbidden.filter';
 import { QueryFailedExceptionFilter } from './common/filter/query-failed.filter';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import {join} from 'path';
 /// 중앙집합 모듈.
 
 @Module({
@@ -60,6 +62,10 @@ import { QueryFailedExceptionFilter } from './common/filter/query-failed.filter'
         synchronize: true, // 개발할때만 true.
       }),
       inject: [ConfigService] //config service 우선 동작해서 인스턴스화 하고 typeorm 실행 -> 비동기, 받아오기에 inject
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'public'),
+      serveRoot: '/public/'
     }),
     MovieModule,
     DirectorModule,

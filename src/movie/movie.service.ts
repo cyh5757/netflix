@@ -9,7 +9,8 @@ import { Director } from 'src/director/entity/director.entity';
 import { Genre } from 'src/genre/entities/genre.entity';
 import { GetMoivesDto } from './dto/get-movies.dto';
 import { CommonService } from 'src/common/common.service';
-
+import {join} from 'path';
+import {rename} from 'fs/promises'
 
 
 @Injectable()
@@ -104,6 +105,18 @@ export class MovieService {
 
     const movieDetailId = movieDetail.identifiers[0].id;
 
+    const movieFolder = join('public', 'movie');
+
+    const tempFolder = join('public', 'temp');
+
+    await rename(
+      join(process.cwd(), tempFolder, createMovieDto.movieFileName),
+      join(process.cwd(), movieFolder, createMovieDto.movieFileName),
+    )
+
+
+
+
     const movie = await qr.manager.createQueryBuilder()
       .insert()
       .into(Movie)
@@ -115,6 +128,7 @@ export class MovieService {
         },
         director,
         //manytomany는 안된다. 따로 해야한다
+        movieFilePath: join(movieFolder, createMovieDto.movieFileName),
       })
       .execute();
 
@@ -124,8 +138,8 @@ export class MovieService {
       .relation(Movie, 'genres')
       .of(movieId)
       .add(genres.map(genre => genre.id))
-    
-    return await qr.manager.findOne(Movie,{
+
+    return await qr.manager.findOne(Movie, {
       where: {
         id: movieId,
       },
