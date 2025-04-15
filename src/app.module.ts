@@ -23,6 +23,7 @@ import { ForbiddenExceptionFilter } from './common/filter/forbidden.filter';
 import { QueryFailedExceptionFilter } from './common/filter/query-failed.filter';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import {join} from 'path';
+import { MovieUserLike } from './movie/entity/movie-user-like.entity';
 /// 중앙집합 모듈.
 
 @Module({
@@ -54,6 +55,7 @@ import {join} from 'path';
         entities: [
           Movie,
           MovieDetail,
+          MovieUserLike,
           Director,
           Genre,
           User,

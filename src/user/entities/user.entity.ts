@@ -1,10 +1,11 @@
 import { Exclude } from "class-transformer";
 import { BaseTable } from "src/common/entity/base-table.entity";
+import { MovieUserLike } from "src/movie/entity/movie-user-like.entity";
 import { Movie } from "src/movie/entity/movie.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
-export enum Role{
+export enum Role {
     admin,
     paidUser,
     user,
@@ -13,7 +14,7 @@ export enum Role{
 
 
 @Entity()
-export class User extends BaseTable{
+export class User extends BaseTable {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -41,10 +42,16 @@ export class User extends BaseTable{
     role: Role;
 
     @OneToMany(
-        ()=>Movie,
+        () => Movie,
         (movie) => movie.creator,
     )
     createdMovies: Movie[];
-    
+
+
+    @OneToMany(
+        () => MovieUserLike,
+        (mul) => mul.user,
+    )
+    likedMovies: MovieUserLike[]
 
 }

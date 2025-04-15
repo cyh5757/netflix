@@ -33,12 +33,13 @@ export class MovieController {
   @Public()
   getMovies(
     @Query() dto?: GetMoivesDto,
+    @UserId() userId?: number,
   ) {
 
     /// title 쿼리의 타입이 string 타입인지?
     /// 이런거는 controller에서 하면 됨.
     // 하지만 논리는 service에서 진행
-    return this.movieService.findAll(dto);
+    return this.movieService.findAll(dto, userId);
   }
   @Get(':id')
   @Public()
@@ -87,4 +88,47 @@ export class MovieController {
   ) {
     return this.movieService.remove(+id);
   }
+
+  /*
+    [Like] [Dislike]
+
+    아무것도 누르지 않은 상태
+    like & Dislike 모두 버튼 꺼져있음.
+
+    Like 버튼 누르면
+    Like 버튼 불 켜짐
+
+    Like 버튼 다시 누르면
+    Like 버튼 불 꺼짐
+
+    Dislike 버튼 누르면
+    Dislike 버튼 불 켜짐
+
+    Dislike 버튼 다시 누르면
+    Dislike 버튼 불 꺼짐
+
+
+    Dislike 버튼 누름
+    Like 버튼 불 꺼지고 Dislike 버튼 불 켜짐.
+  */
+
+    @Post(':id/like')
+    createMovieLike(
+      @Param('id', ParseIntPipe) movieId: number,
+      @UserId() userId: number,
+    ){
+      return this.movieService.toggleMovieLike(movieId, userId, true);
+    }
+
+    @Post(':id/dislike')
+    createMovieDislike(
+      @Param('id', ParseIntPipe) movieId: number,
+      @UserId() userId: number,
+    ){
+      return this.movieService.toggleMovieLike(movieId, userId, false);
+    }
+
+
+
+
 }
