@@ -41,6 +41,15 @@ export class MovieController {
     // 하지만 논리는 service에서 진행
     return this.movieService.findAll(dto, userId);
   }
+  /// get :id 보다 먼저 나와야한다.
+  @Get('recent')
+  getMoviesRecent(){
+    return this.movieService.findRecent();
+
+
+  }
+
+  
   @Get(':id')
   @Public()
   getMovie(
