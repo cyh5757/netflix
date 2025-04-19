@@ -8,14 +8,15 @@ import { Public } from 'src/auth/decorator/public.decorator';
 import { RBAC } from 'src/auth/decorator/rbac.decorator';
 import { Role } from 'src/user/entities/user.entity';
 import { GetMoivesDto } from './dto/get-movies.dto';
-import { CacheInterceptor } from 'src/common/interceptor/cache.interceptor';
 import { Transaction } from 'typeorm';
 import { TransactionInterceptor } from 'src/common/interceptor/transaction.interceptor';
 import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { MovieFilePipe } from './pipe/movie-file.pipe';
 import { UserId } from 'src/user/decorator/user-id.decorator';
 import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
-import {QueryRunner as QR} from 'typeorm'
+import {QueryRunner as QR} from 'typeorm';
+import { CacheInterceptor } from 'src/common/interceptor/cache.interceptor';
+import {CacheKey, CacheTTL, CacheInterceptor as CI} from '@nestjs/cache-manager';
 
 
 
@@ -43,6 +44,9 @@ export class MovieController {
   }
   /// get :id 보다 먼저 나와야한다.
   @Get('recent')
+  @UseInterceptors(CI)
+  @CacheKey('getMoviewRecent')
+  @CacheTTL(1000)
   getMoviesRecent(){
     return this.movieService.findRecent();
 

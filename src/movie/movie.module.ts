@@ -26,9 +26,6 @@ import { CacheModule } from '@nestjs/cache-manager';
     User,
   ]),
   CommonModule,
-  CacheModule.register({
-    ttl: 3000,
-  }),
   // MulterModule.register({
   //   storage: diskStorage({
   //     /// ....../Netflix/public/movie

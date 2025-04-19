@@ -44,8 +44,6 @@ export class MovieService {
     const cacheData = await this.cacheManager.get('MOVIE_RECENT')
 
     if(cacheData){
-      console.log('cache 가져옴!');
-
       return cacheData;
     }
 
@@ -56,7 +54,7 @@ export class MovieService {
       take: 10,
     });
 
-    await this.cacheManager.set('MOVIE_RECENT', data, 0);
+    await this.cacheManager.set('MOVIE_RECENT', data);
     return data;
 
   }
