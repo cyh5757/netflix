@@ -17,6 +17,8 @@ import { QueryRunner } from 'src/common/decorator/query-runner.decorator';
 import {QueryRunner as QR} from 'typeorm';
 import { CacheInterceptor } from 'src/common/interceptor/cache.interceptor';
 import {CacheKey, CacheTTL, CacheInterceptor as CI} from '@nestjs/cache-manager';
+import { ThrottleInterceptor } from 'src/common/interceptor/throttle.interceptor';
+import { Throttle } from 'src/common/decorator/throttle.decorator';
 
 
 
@@ -32,6 +34,10 @@ export class MovieController {
 
   @Get()
   @Public()
+  @Throttle({
+    count: 5,
+    unit: 'minute',
+  })
   getMovies(
     @Query() dto?: GetMoivesDto,
     @UserId() userId?: number,
