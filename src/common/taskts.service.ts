@@ -1,24 +1,36 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable, Logger, LoggerService } from "@nestjs/common";
 import { Cron, SchedulerRegistry } from "@nestjs/schedule";
 import { InjectRepository } from "@nestjs/typeorm";
 import { readdir, unlink } from "fs/promises";
 import { join, parse } from "path";
 import { Movie } from "src/movie/entity/movie.entity";
 import { Repository, Tree } from "typeorm";
+import { DefaultLogger } from "./logger/default.logger";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 
 @Injectable()
 export class TasksService {
+    // private readonly logger = new Logger(TasksService.name);
     constructor(
         @InjectRepository(Movie)
         private readonly movieRepository: Repository<Movie>,
         private readonly schedulerRegistry: SchedulerRegistry,
+        // private readonly logger: DefaultLogger,
+        @Inject(WINSTON_MODULE_NEST_PROVIDER)
+        private readonly logger: LoggerService,
     ) { }
 
+    @Cron('*/5 * * * * *')
     logEverySecond() {
-        console.log('1초마다 실행!')
+        this.logger.error('FATAL 레벨 로그',null,TasksService.name);
+        this.logger.error('ERROR 레벨 로그',null,TasksService.name);
+        this.logger.warn('WARN 레벨 로그',TasksService.name);
+        this.logger.log('LOG 레벨 로그',TasksService.name);
+        this.logger.debug('DEBUG 레벨 로그',TasksService.name);
+        this.logger.verbose('VERBOSE 레벨 로그', TasksService.name);
     }
 
-    @Cron('* * * * * *')
+    // @Cron('* * * * * *')
     async eraseOrphanFiles() {
         const files = await readdir(join(process.cwd(), 'public', 'temp'))
 
@@ -81,32 +93,32 @@ SET "dislikeCount" =(
         )
     }
 
-    @Cron('* * * * * *',{
-        name: 'printer'
-    })
-    printer(){
-        console.log('print every seconds')
-    }
-    @Cron('*/5 * * * * *')
-    stopper() {
-      console.log('--- stopper run ---');
-      const job = this.schedulerRegistry.getCronJob('printer');
+    // @Cron('* * * * * *',{
+    //     name: 'printer'
+    // })
+    // printer(){
+    //     console.log('print every seconds')
+    // }
+    // @Cron('*/5 * * * * *')
+    // stopper() {
+    //   console.log('--- stopper run ---');
+    //   const job = this.schedulerRegistry.getCronJob('printer');
       
 
-        // console.log('# Last Date');
-        // console.log(job.lastDate());
+    //     // console.log('# Last Date');
+    //     // console.log(job.lastDate());
         
-        // console.log('# Last Date');
-        // console.log(job.nextDate());
+    //     // console.log('# Last Date');
+    //     // console.log(job.nextDate());
 
-        // console.log('# Last Date');
-        // console.log(job.nextDates(5));
-        if(job.isCallbackRunning){
-            job.stop();
-        }
-        else{
-            job.start();
-        }
-    }
+    //     // console.log('# Last Date');
+    //     // console.log(job.nextDates(5));
+    //     if(job.isCallbackRunning){
+    //         job.stop();
+    //     }
+    //     else{
+    //         job.start();
+    //     }
+    // }
 
 }

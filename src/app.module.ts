@@ -4,7 +4,7 @@ import { MovieModule } from './movie/movie.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
-import { Movie} from './movie/entity/movie.entity';
+import { Movie } from './movie/entity/movie.entity';
 import { MovieDetail } from './movie/entity/movie-dtail.entity';
 import { DirectorModule } from './director/director.module';
 import { Director } from './director/entity/director.entity';
@@ -22,11 +22,14 @@ import { ResponseTimeInterceptor } from './common/interceptor/response-time.inte
 import { ForbiddenExceptionFilter } from './common/filter/forbidden.filter';
 import { QueryFailedExceptionFilter } from './common/filter/query-failed.filter';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import {join} from 'path';
+import { join } from 'path';
 import { MovieUserLike } from './movie/entity/movie-user-like.entity';
 import { CacheModule } from '@nestjs/cache-manager';
 import { ThrottleInterceptor } from './common/interceptor/throttle.interceptor';
 import { ScheduleModule } from '@nestjs/schedule';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
+
 /// 중앙집합 모듈.
 
 @Module({
@@ -48,7 +51,7 @@ import { ScheduleModule } from '@nestjs/schedule';
       })
     }),
     TypeOrmModule.forRootAsync({ // 비동기하는 이유: config 모듈이 인스턴스화 -> inject 받아야해서
-      useFactory: (configService: ConfigService) => ({ 
+      useFactory: (configService: ConfigService) => ({
         type: configService.get<string>(envVariableKeys.dbType) as "postgres",
         host: configService.get<string>(envVariableKeys.dbHost),
         port: configService.get<number>(envVariableKeys.dbPort),
@@ -77,6 +80,33 @@ import { ScheduleModule } from '@nestjs/schedule';
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
+    WinstonModule.forRoot({
+      level: 'debug',
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.colorize({
+              all: true,
+            }),
+
+            winston.format.timestamp(),
+            winston.format.printf(info => `${info.timestamp} [${info.context}] ${info.level} ${info.message}`)
+          ),
+        }),
+        new winston.transports.File({
+          dirname: join(process.cwd(), 'logs'),
+          filename: 'logs.log',
+          format: winston.format.combine(
+            // winston.format.colorize({
+            //   all: true,
+            // }),
+
+            winston.format.timestamp(),
+            winston.format.printf(info => `${info.timestamp} [${info.context}] ${info.level} ${info.message}`)
+          ),
+        })
+      ]
+    }),
     MovieModule,
     DirectorModule,
     GenreModule,
@@ -89,10 +119,10 @@ import { ScheduleModule } from '@nestjs/schedule';
       useClass: AuthGuard, /// 모든 기능들에서 Guard중 심지어, login, register에도
       /// 따라서 필요에 의해 public으로 풀어줘야할 기능은 풀어줘야함.
       /// decorator로 public으로 만들 router에 가서 적용. -> auth.controller.ts
-    },{
+    }, {
       provide: APP_GUARD,
       useClass: RBACGuard,
-    },{
+    }, {
       provide: APP_INTERCEPTOR,
       useClass: ResponseTimeInterceptor,
     },
@@ -110,15 +140,15 @@ import { ScheduleModule } from '@nestjs/schedule';
     }
   ]
 })
-export class AppModule implements NestModule{
+export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(
       BearerTokenMiddleware,
     ).exclude({
-      path:'auth/login',
+      path: 'auth/login',
       method: RequestMethod.POST,
-    },{
-      path:'auth/register',
+    }, {
+      path: 'auth/register',
       method: RequestMethod.POST,
     }).forRoutes('*')
   }
