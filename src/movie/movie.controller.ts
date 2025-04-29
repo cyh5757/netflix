@@ -19,27 +19,14 @@ import { CacheInterceptor } from 'src/common/interceptor/cache.interceptor';
 import {CacheKey, CacheTTL, CacheInterceptor as CI} from '@nestjs/cache-manager';
 import { ThrottleInterceptor } from 'src/common/interceptor/throttle.interceptor';
 import { Throttle } from 'src/common/decorator/throttle.decorator';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 
 
 
-
-@Controller({
-  path: 'movie',
-  version: '2'
-})
-export class MovieControllerV2{
-  @Get()
-  getMovies(){
-    return [];
-  }
-}
-
-
-@Controller({
-  path: 'movie',
-  version: VERSION_NEUTRAL,
-})
+@Controller('movie')
+@ApiBearerAuth()
+@ApiTags('movie')
 @UseInterceptors(ClassSerializerInterceptor)
 export class MovieController {
   constructor(private readonly movieService: MovieService) { }
@@ -49,6 +36,13 @@ export class MovieController {
   @Throttle({
     count: 5,
     unit: 'minute',
+  })
+  @ApiOperation({
+    description: '[Movie]를 pagination하는 Api'
+  })
+  @ApiResponse({
+    status: 200,
+    description: '성공적으로 API Pagination을 시행했을 때'
   })
   getMovies(
     @Query() dto?: GetMoivesDto,
